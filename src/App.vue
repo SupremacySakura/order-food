@@ -4,7 +4,6 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <RouterView />
-  <div>我是div</div>
 </template>
 
 <style scoped>
