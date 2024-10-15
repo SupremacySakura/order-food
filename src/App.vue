@@ -24,6 +24,5 @@ onBeforeMount(()=>{
 
 .appBox{
   width: 100%;
-  background-color: aqua;
 }
 </style>

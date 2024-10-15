@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import location from '../../public/location.png'
 import foodPhoto from '../../public/foodPhoto.png'
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+//导入setting仓库
+import { useSettingStore } from '@/stores/settingStore';
+const { primary_color } = useSettingStore()
+
+console.log(primary_color)
 const value = ref('');
 const clickSearch = () => {
 
 }
+const color = ref('')
 </script>
 
 <template>
-  <div class="homeBox">
-    <div class="searchBox">
+  <div class="homeBox" :style="{backgroundColor:primary_color}">
+    <div class="searchBox" :style="{backgroundColor:primary_color}">
       <div class="locationInfo">
         <img :src="location" alt="" class="location">
         <span>电子科技大学</span>
       </div>
-      <van-search v-model="value" show-action placeholder="请输入搜索关键词" background="#ffe43f" shape="round">
+      <van-search v-model="value" show-action placeholder="请输入搜索关键词" :background="primary_color" shape="round">
         <template #action>
           <div @click="clickSearch">搜索</div>
         </template>
@@ -48,17 +54,17 @@ const clickSearch = () => {
 </template>
 
 <style lang="less" scoped>
+
 .homeBox {
   width: 100%;
   height: 1000px;
-  background-color: #ffe43f;
+  background-color: #4CAF50;
 
   .searchBox {
     width: 100%;
     position: sticky;
     top: 0;
-    background-color: #ffe43f;
-
+    background-color: #4CAF50;
     .locationInfo {
       width: 100%;
       display: flex;
