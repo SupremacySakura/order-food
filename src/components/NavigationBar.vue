@@ -71,6 +71,7 @@ onMounted(()=>{
 .navigationBarBox {
   width: 100%;
   height: 6%;
+  min-height: 48px;
   background-color: white;
   position: fixed;
   bottom: 0;
@@ -87,6 +88,7 @@ onMounted(()=>{
 
     img {
       width: 40%;
+      height: 48%;
     }
 
     span {

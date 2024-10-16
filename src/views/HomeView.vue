@@ -2,21 +2,49 @@
 import location from '../../public/location.png'
 import foodPhoto from '../../public/foodPhoto.png'
 import { onMounted, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router'
+import { getAllShop } from '@/services/apis/home'
+import { shopCardClass } from '@/class/shopClass'
+const router = useRouter()
 //导入setting仓库
 import { useSettingStore } from '@/stores/settingStore';
 const { primary_color } = useSettingStore()
 
-console.log(primary_color)
 const value = ref('');
 const clickSearch = () => {
 
 }
 const color = ref('')
+const shopList = ref<shopCardClass[]>([])
+/**
+ * 跳转到店铺
+ * @param id 店铺id
+ */
+const gotoShop = (id: string | number) => {
+  router.push({ path: '/shop', query: { id: id } })
+}
+//初始化 数据请求
+onMounted(async()=>{
+  //请求店铺信息
+  const res = await getAllShop()
+  //将buffer图片转换为blob
+  res.data.data.map((item:shopCardClass)=>{
+    const blob = new Blob([item.coverImage], { type: 'image/jpg' });
+    item.coverImage = URL.createObjectURL(blob)
+    return item
+  })
+  //TODO
+  if(res.data.code===200){
+    shopList.value = res.data.data
+  }
+  console.log(res.data.data)
+})
+
 </script>
 
 <template>
-  <div class="homeBox" :style="{backgroundColor:primary_color}">
-    <div class="searchBox" :style="{backgroundColor:primary_color}">
+  <div class="homeBox" :style="{ backgroundColor: primary_color }">
+    <div class="searchBox" :style="{ backgroundColor: primary_color }">
       <div class="locationInfo">
         <img :src="location" alt="" class="location">
         <span>电子科技大学</span>
@@ -29,23 +57,23 @@ const color = ref('')
     </div>
 
     <div class="shopList">
-      <div class="card">
+      <div class="card" @click="gotoShop(item.id)" v-for="item in shopList" :key="item.id">
         <div class="card_left">
-          <img :src="foodPhoto" alt="">
+          <img :src="item.coverImage||foodPhoto" :alt="item.name">
         </div>
         <div class="card_right">
-          <h4>芳的家(电子科技大学店)xxxxxxx</h4>
+          <h4>{{ item.name }}</h4>
           <div class="shopInfo">
-            <span class="shopPoint">5.0分</span>
-            <span class="shopSales">月售9999+</span>
+            <span class="shopPoint">{{item.point}}分</span>
+            <span class="shopSales">月售{{ item.sales>9999?'9999+':item.sales }}</span>
           </div>
           <div class="delivery">
-            <span>起送￥18</span>
-            <span>配送 约￥0.2</span>
+            <span>起送￥{{ item.start_price }}</span>
+            <span>配送 约￥{{ item.delivery_price }}</span>
           </div>
-          <span class="label">千人收藏的好店</span>
+          <span class="label" v-for="subItem in item.label">{{ subItem }}</span>
           <div>
-            <span class="other">神券</span>
+            <span class="other" v-for="subItem in item.other">{{ subItem }}</span>
           </div>
         </div>
       </div>
@@ -54,7 +82,6 @@ const color = ref('')
 </template>
 
 <style lang="less" scoped>
-
 .homeBox {
   width: 100%;
   height: 1000px;
@@ -65,6 +92,7 @@ const color = ref('')
     position: sticky;
     top: 0;
     background-color: #4CAF50;
+
     .locationInfo {
       width: 100%;
       display: flex;
