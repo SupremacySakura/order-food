@@ -29,8 +29,13 @@ onMounted(async()=>{
   const res = await getAllShop()
   //将buffer图片转换为blob
   res.data.data.map((item:shopCardClass)=>{
-    const blob = new Blob([item.coverImage], { type: 'image/jpg' });
-    item.coverImage = URL.createObjectURL(blob)
+    if(item.coverImage.length>0){
+      const blob = new Blob([item.coverImage], { type: 'image/jpg' });
+      item.coverImage = URL.createObjectURL(blob)
+    }else{
+      item.coverImage = foodPhoto
+    }
+    
     return item
   })
   //TODO
@@ -59,7 +64,7 @@ onMounted(async()=>{
     <div class="shopList">
       <div class="card" @click="gotoShop(item.id)" v-for="item in shopList" :key="item.id">
         <div class="card_left">
-          <img :src="item.coverImage||foodPhoto" :alt="item.name">
+          <img :src="item.coverImage" :alt="item.name">
         </div>
         <div class="card_right">
           <h4>{{ item.name }}</h4>
