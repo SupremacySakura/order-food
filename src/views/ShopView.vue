@@ -51,6 +51,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   .backgroundImage {
     width: 100%;
     height: 100px;
@@ -70,6 +71,7 @@ onMounted(() => {
     background-color: white;
     overflow: hidden;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
     .card_top {
       width: 100%;
       height: 50%;
@@ -87,21 +89,29 @@ onMounted(() => {
 
         h4 {
           font-weight: 500;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
 
       }
 
       .label {
+        width: 100%;
         font-size: 12px;
         color: rgb(166.2, 168.6, 173.4);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     }
 
     .card_bottom {
       width: 100%;
       height: 50%;
-      background-color: rgba(0,0,0,0.03);
+      background-color: rgba(0, 0, 0, 0.03);
       padding: 10px;
+
       .other {
         display: inline-block;
         font-size: 12px;
