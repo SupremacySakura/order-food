@@ -29,7 +29,7 @@ const handleScroll = (event: Event)=>{
         activeIndex.value = i
         return
       }
-      if(scrollTop>=partPosition.value[partPosition.value.length-1]){
+      if(scrollTop>=partPosition.value[partPosition.value.length-1]-310){
         activeIndex.value = partPosition.value.length-1
         return
       }
@@ -37,8 +37,8 @@ const handleScroll = (event: Event)=>{
   }
 }
 const gotoPart = (index:number)=>{
-  if(partList.value){
-    const part = partList.value[index]
+  if(foodList.value){
+    const part = (foodList.value as HTMLElement).children[index]
     if(part){
       (part as HTMLElement).scrollIntoView({behavior:'smooth'})
     }
@@ -65,6 +65,7 @@ onMounted(() => {
     emptyBlock.style.height = '110px'
     foodList.value && (foodList.value as HTMLElement).appendChild(emptyBlock)
   }
+  console.log(foodList.value)
 })
 
 </script>
