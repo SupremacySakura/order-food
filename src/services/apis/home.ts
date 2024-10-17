@@ -6,7 +6,15 @@ const test = ()=>{
 const getAllShop = ()=>{
   return http.get('/shop')
 }
+const getMenuById = (id:number)=>{
+  return http.get('/menu',{
+    params:{
+      id:id
+    }
+  })
+}
 export {
   test,
-  getAllShop
+  getAllShop,
+  getMenuById
 }
