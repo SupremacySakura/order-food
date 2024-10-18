@@ -55,7 +55,14 @@ const gotoPart = (index: number) => {
   if (foodList.value) {
     const part = (foodList.value as HTMLElement).children[index]
     if (part) {
-      (part as HTMLElement).scrollIntoView({ behavior: 'smooth' })
+      let scrollNum = 0
+      for(let i = 0;i<index;i++){
+      scrollNum +=  ((foodList.value as HTMLElement).children[i] as HTMLElement).offsetHeight
+      }
+      (foodList.value as HTMLElement).scroll({
+        top:scrollNum,
+        behavior:'smooth'
+      })
     }
   }
 
