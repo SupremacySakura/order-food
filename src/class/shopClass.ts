@@ -33,6 +33,7 @@ class menuClass {
   sales: number
   price: number
   shop_id: string | number
+  count:number
   constructor(id: number, type: string, image: string, name: string, menu_label: string[], sales: number, price: number, shop_id: string | number) {
     this.id = id
     this.type = type
@@ -42,6 +43,7 @@ class menuClass {
     this.sales = sales
     this.price = price
     this.shop_id = shop_id
+    this.count = 0
   }
 }
 //菜单类

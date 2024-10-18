@@ -124,6 +124,7 @@ const totalPrice = computed(()=>{
  */
 const addToCart = (item:menuClass)=>{
   const index = shoppingCart.value.findIndex(e => e.id === item.id)
+  item.count += 1
   //判断购物车里面是否有添加的类型
   if(index!==-1){
     //有
@@ -133,6 +134,17 @@ const addToCart = (item:menuClass)=>{
   //没有
   shoppingCart.value.push({...item,count:1})
 }
+const delFromCart = (item:menuClass)=>{
+  const index = shoppingCart.value.findIndex(e => e.id === item.id)
+  if(item.count>0){
+    item.count -= 1
+    shoppingCart.value[index].count -= 1
+  }
+  if(shoppingCart.value[index].count<=0){
+    //从购物车移除
+    shoppingCart.value.splice(index,1)
+  }
+}
 onBeforeMount(() => {
   const viewPortHeight = window.innerHeight
   foodNavMinHeight.value = viewPortHeight - 300
@@ -141,6 +153,14 @@ onMounted(async() => {
   //获取店铺id
   id.value = route.query?.id
   menu.value = await getMenu(id.value)
+  //对menu的数据初始化
+  menu.value.map((item)=>{
+    item.menu.map((subItem)=>{
+      subItem.count = 0
+      return subItem
+    })
+    return item
+  })
   getShop(id.value)
   await nextTick()
   // 创建每个部分的 ref,处理ref
@@ -211,8 +231,12 @@ onMounted(async() => {
               </div>
               <div class="buy">
                 <span class="price">￥{{ parseFloat(`${subItem.price}`) }}</span>
-                <button class="addButton" :style="{ backgroundColor: primary_color }"
-                  @click="addToCart(subItem)">+</button>
+                <div>
+                  <button class="delButton" :style="{ borderColor: primary_color }" @click="delFromCart(subItem)" v-if="subItem.count>0">-</button>
+                  <span class="count"  v-if="subItem.count > 0">{{ subItem.count }}</span>
+                  <button class="addButton" :style="{ backgroundColor: primary_color }"
+                    @click="addToCart(subItem)">+</button>
+                </div>
               </div>
             </div>
           </div>
@@ -234,9 +258,9 @@ onMounted(async() => {
           <img :src="translator_shop" alt="">
           <div class="priceInfo">
             <span class="price">￥{{ totalPrice }}</span>
-          <span class="price_translate">免配送费</span>
+            <span class="price_translate">免配送费</span>
           </div>
-          
+
         </div>
       </div>
       <div class="translateInfo">
@@ -434,7 +458,18 @@ onMounted(async() => {
                 color: orangered;
                 font-weight: 600;
               }
-
+            .delButton{
+                width: 25px;
+                height: 25px;
+                border-radius: 25px;
+                border: none;
+                border: 2px solid;
+                background-color: white;
+            }
+            .count{
+              margin-left: 10px;
+              margin-right: 10px;
+            }
               .addButton {
                 width: 25px;
                 height: 25px;
