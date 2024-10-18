@@ -63,7 +63,7 @@ const getMenu =async (id:number)=>{
   const res = await getMenuById(id)
   //将buffer图片转换为blob
   for (let i = 0; i < res.data.data.length; i++) {
-    res.data.data[0].menu.map((item: any) => {
+    res.data.data[i].menu.map((item: any) => {
       if (item.image.length > 0) {
         const blob = new Blob([item.image], { type: 'image/jpg' });
         item.image = URL.createObjectURL(blob)
