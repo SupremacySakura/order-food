@@ -34,7 +34,8 @@ class menuClass {
   price: number
   shop_id: string | number
   count:number
-  constructor(id: number, type: string, image: string, name: string, menu_label: string[], sales: number, price: number, shop_id: string | number) {
+  contains:string
+  constructor(id: number, type: string, image: string, name: string, menu_label: string[], sales: number, price: number, shop_id: string | number,contains:string) {
     this.id = id
     this.type = type
     this.image = image
@@ -44,6 +45,7 @@ class menuClass {
     this.price = price
     this.shop_id = shop_id
     this.count = 0
+    this.contains = contains
   }
 }
 //菜单类
@@ -58,8 +60,8 @@ class menuListClass {
 //菜单＋数量类
 class shoppingCartClass extends menuClass {
   count:number 
-  constructor(count: number, id: number, type: string, image: string, name: string, menu_label: string[], sales: number, price: number, shop_id: string | number){
-    super(id,type,image,name,menu_label,sales,price,shop_id)
+  constructor(count: number, id: number, type: string, image: string, name: string, menu_label: string[], sales: number, price: number, shop_id: string | number,contains:string){
+    super(id,type,image,name,menu_label,sales,price,shop_id,contains)
     this.count = count
   }
 }

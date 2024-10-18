@@ -9,7 +9,9 @@ const router = useRouter()
 //导入setting仓库
 import { useSettingStore } from '@/stores/settingStore';
 const { primary_color } = useSettingStore()
-
+//导入shop仓库
+import { useShopStore } from '@/stores/shopStore'
+const { _shopList,_setShopList} = useShopStore()
 const value = ref('');
 const clickSearch = () => {
 
@@ -41,8 +43,8 @@ onMounted(async()=>{
   //TODO
   if(res.data.code===200){
     shopList.value = res.data.data
+    _setShopList(shopList.value)
   }
-  console.log(res.data.data)
 })
 
 </script>

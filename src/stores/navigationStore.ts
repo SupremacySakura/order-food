@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { ref, computed } from "vue"
 
-export const useNavigationStore = defineStore('counter', () => {
+export const useNavigationStore = defineStore('navigation', () => {
   //声明数据
 
   //活跃导航id

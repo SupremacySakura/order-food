@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { ref, computed } from "vue"
 
-export const useSettingStore = defineStore('counter', () => {
+export const useSettingStore = defineStore('setting', () => {
   //声明数据
   const primary_color = ref('pink')
   //活跃导航id
@@ -20,4 +20,4 @@ export const useSettingStore = defineStore('counter', () => {
     primary_color,
     change_Primary_color
   }
-})
+},{persist:true})
