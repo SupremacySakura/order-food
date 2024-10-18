@@ -73,18 +73,7 @@ const getMenu =async (id:number)=>{
       return item
     })
   }
-  // 创建每个部分的 ref,处理ref
-  if (partList.value) {
-    (partList.value as Array<any>).forEach(element => {
-      partPosition.value.push(element.offsetTop)
-    })
-  }
-  for (let i = 0; i < partPosition.value.length; i++) {
-    const emptyBlock = document.createElement('div')
-    emptyBlock.className = 'part'
-    emptyBlock.style.height = '110px'
-    foodList.value && (foodList.value as HTMLElement).appendChild(emptyBlock)
-  }
+ 
   return res.data.data
 }
 const shop = ref<shopCardClass>()
@@ -92,6 +81,27 @@ const getShop = async(id:number)=>{
   const res = await getAllShop()
   const index =  res.data.data.findIndex((item:any)=>{return item.id ===+id})
   shop.value = res.data.data[index]
+}
+/**
+ * 为菜单添加空白,需要在菜单加载完成后使用
+ */
+const addEmptyBlock = ()=>{
+  let menuLength = 0
+  menu.value.forEach((item) => {
+    menuLength += item.menu.length
+  })
+  for (let i = 0; i < menuLength; i++) {
+    const emptyBlock = document.createElement('div')
+    emptyBlock.className = 'part'
+    emptyBlock.style.height = '110px'
+    foodList.value && (foodList.value as HTMLElement).appendChild(emptyBlock)
+  }
+  for (let i = 0; i < partPosition.value.length - 1; i++) {
+    const emptyBlock = document.createElement('div')
+    emptyBlock.className = 'part'
+    emptyBlock.style.height = '40px'
+    foodList.value && (foodList.value as HTMLElement).appendChild(emptyBlock)
+  }
 }
 onBeforeMount(() => {
   const viewPortHeight = window.innerHeight
@@ -102,6 +112,14 @@ onMounted(async() => {
   id.value = route.query?.id
   menu.value = await getMenu(id.value)
   getShop(id.value)
+  await nextTick()
+  // 创建每个部分的 ref,处理ref
+  if (partList.value) {
+    (partList.value as Array<any>).forEach(element => {
+      partPosition.value.push(element.offsetTop)
+    })
+  }
+ addEmptyBlock()
 })
 
 </script>
