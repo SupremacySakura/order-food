@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref, nextTick, type VNode, type VNodeRef } from 'vue'
+import { onBeforeMount, onMounted, ref, nextTick, type VNode, type VNodeRef, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import foodPhoto from '../../public/foodPhoto.png'
 //导入setting仓库
@@ -8,9 +8,12 @@ const { primary_color } = useSettingStore()
 //导入请求方式
 import { getMenuById,getAllShop } from '@/services/apis/home'
 //导入店铺与菜单类
-import { shopCardClass,menuClass,menuListClass } from '@/class/shopClass';
+import { shopCardClass,menuClass,menuListClass,shoppingCartClass } from '@/class/shopClass';
 const router = useRouter()
 const route = useRoute()
+//导入配送员图片
+import translator from '../../public/translator.png'
+import translator_shop from '../../public/translator_shop.png'
 //店铺id
 const id = ref()
 //最低高度
@@ -76,11 +79,15 @@ const getMenu =async (id:number)=>{
  
   return res.data.data
 }
+//店铺信息
 const shop = ref<shopCardClass>()
+//配送费
+const start_price = ref(0)
 const getShop = async(id:number)=>{
   const res = await getAllShop()
   const index =  res.data.data.findIndex((item:any)=>{return item.id ===+id})
   shop.value = res.data.data[index]
+  start_price.value = shop.value?.start_price || 0
 }
 /**
  * 为菜单添加空白,需要在菜单加载完成后使用
@@ -102,6 +109,29 @@ const addEmptyBlock = ()=>{
     emptyBlock.style.height = '40px'
     foodList.value && (foodList.value as HTMLElement).appendChild(emptyBlock)
   }
+}
+//购物车
+const shoppingCart = ref<shoppingCartClass[]>([])
+//商品价格
+const totalPrice = computed(()=>{
+  return shoppingCart.value.reduce((accumulator,item)=>{
+    return accumulator + item.price *item.count
+  },0)
+})
+/**
+ * 将一个菜品加入购物车
+ * @param item 菜品
+ */
+const addToCart = (item:menuClass)=>{
+  const index = shoppingCart.value.findIndex(e => e.id === item.id)
+  //判断购物车里面是否有添加的类型
+  if(index!==-1){
+    //有
+    shoppingCart.value[index].count += 1
+    return
+  }
+  //没有
+  shoppingCart.value.push({...item,count:1})
 }
 onBeforeMount(() => {
   const viewPortHeight = window.innerHeight
@@ -161,7 +191,8 @@ onMounted(async() => {
 
     <div class="foodShow">
       <div class="foodNav" :style="{ minHeight: foodNavMinHeight + 'px' }">
-        <span :class="[{ active: activeIndex === index }]" @click="gotoPart(index)" v-for="(item,index) in menu" :key="item.type">{{ item.type }}</span>
+        <span :class="[{ active: activeIndex === index }]" @click="gotoPart(index)" v-for="(item,index) in menu"
+          :key="item.type">{{ item.type }}</span>
       </div>
       <div class="foodList" @scroll="handleScroll" ref="foodList">
         <div class="part" v-for="(item, index) in menu" :key="item.type">
@@ -180,7 +211,8 @@ onMounted(async() => {
               </div>
               <div class="buy">
                 <span class="price">￥{{ parseFloat(`${subItem.price}`) }}</span>
-                <button class="addButton" :style="{ backgroundColor: primary_color }">+</button>
+                <button class="addButton" :style="{ backgroundColor: primary_color }"
+                  @click="addToCart(subItem)">+</button>
               </div>
             </div>
           </div>
@@ -188,6 +220,31 @@ onMounted(async() => {
       </div>
     </div>
 
+    <div class="checkout">
+      <div v-if="shoppingCart.length===0" class="nonShop">
+        <div class="nonShop_left">
+          <img :src="translator" alt="">
+          <span class="price">￥0</span>
+          <span class="line">|</span>
+          <span class="price_translate">免配送费</span>
+        </div>
+      </div>
+      <div v-else class="shop">
+        <div class="shop_left">
+          <img :src="translator_shop" alt="">
+          <div class="priceInfo">
+            <span class="price">￥{{ totalPrice }}</span>
+          <span class="price_translate">免配送费</span>
+          </div>
+          
+        </div>
+      </div>
+      <div class="translateInfo">
+        <span v-if="shoppingCart.length === 0">￥{{start_price}}起送</span>
+        <span v-else-if="start_price - totalPrice>0">还差￥{{ start_price - totalPrice }}起送</span>
+        <button v-else class="gotoBuy" :style="{backgroundColor:primary_color}">去结算</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -387,6 +444,89 @@ onMounted(async() => {
             }
           }
         }
+      }
+    }
+  }
+  .checkout{
+    width: 90%;
+    height: 60px;
+    background-color: black;
+    position: sticky;
+    bottom: 1%;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+   
+    .nonShop{
+      width: 100%;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      .nonShop_left{
+        display: flex;
+        align-items: center;
+        img {
+            width: 50px;
+          }
+          .price{
+            font-size: 24px;
+            font-weight: 600;
+            margin-left: 10px;
+            margin-right: 5px;
+          }
+          .line{
+            color: rgb(166.2, 168.6, 173.4);
+            margin-right: 5px;
+          }
+          .price_translate{
+            color: rgb(166.2, 168.6, 173.4);
+            font-size: 14px;
+          }
+      }
+    }
+    .shop{
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        .shop_left{
+            display: flex;
+            align-items: center;
+          img {
+              width: 50px;
+            }
+            .priceInfo{
+              display: flex;
+              flex-direction: column;
+              margin-left: 10px;
+              .price{
+                font-size: 24px;
+              }
+              .price_translate{
+                font-size: 12px;
+              }
+            }
+        }
+       
+    }
+    .translateInfo{
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+      span{
+        white-space: nowrap;
+        color: rgb(166.2, 168.6, 173.4);
+        font-size: 18px;
+      }
+      .gotoBuy{
+        width: 80px;
+        height: 40px;
+        border-radius: 40px;
+        border: none;
       }
     }
   }

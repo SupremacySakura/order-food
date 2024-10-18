@@ -44,6 +44,7 @@ class menuClass {
     this.shop_id = shop_id
   }
 }
+//菜单类
 class menuListClass {
   type: string
   menu: menuClass[]
@@ -52,8 +53,18 @@ class menuListClass {
     this.menu = menu
   }
 }
+//菜单＋数量类
+class shoppingCartClass extends menuClass {
+  count:number 
+  constructor(count: number, id: number, type: string, image: string, name: string, menu_label: string[], sales: number, price: number, shop_id: string | number){
+    super(id,type,image,name,menu_label,sales,price,shop_id)
+    this.count = count
+  }
+}
+
 export {
   shopCardClass,
   menuClass,
-  menuListClass
+  menuListClass,
+  shoppingCartClass
 }
