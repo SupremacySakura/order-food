@@ -17,6 +17,8 @@ const route = useRoute()
 //导入配送员图片
 import translator from '../../public/translator.png'
 import translator_shop from '../../public/translator_shop.png'
+//导入删除图标
+import deleteIcon from '../../public/delete.png'
 //店铺id
 const id = ref()
 //最低高度
@@ -196,6 +198,22 @@ const whiteHeight = computed(() => {
     return 0
   }
 })
+/**
+ * 清空购物车
+ */
+const deleteCart = ()=>{
+  shoppingCart.value = []
+  _setShoppingCart(shoppingCart.value)
+  menu.value.map((item)=>{
+    item.menu.map((e)=>{
+      e.count = 0
+      return e
+    })
+    return item
+  })
+  _setMenu(menu.value)
+  isShow.value = false
+}
 onBeforeMount(() => {
   const viewPortHeight = window.innerHeight
   foodNavMinHeight.value = viewPortHeight - 300
@@ -327,6 +345,13 @@ onMounted(async () => {
     <div class="shoppingCart" v-show="isShow && shoppingCart.length > 0">
       <div class="white" :style="{ height: whiteHeight + 'px' }" @click="isShow = false"></div>
       <div class="cart" ref="cart">
+        <div class="head">
+          <span>已选商品</span>
+          <div class="delete" @click="deleteCart">
+            <img :src="deleteIcon" alt="">
+            <span>清空购物车</span>
+          </div>
+        </div>
         <div v-for="item in shoppingCart" class="cartItem">
           <div class="image">
             <img :src="item.image" alt="">
@@ -692,7 +717,27 @@ onMounted(async () => {
       width: 100%;
       display: flex;
       flex-direction: column;
-
+      .head{
+        padding: 10px;
+        background-color: white;
+        display: flex;
+        justify-content: space-between;
+        span{
+          font-size: 12px;
+        }
+        .delete{
+          display: flex;
+          align-items: center;
+          img{
+            width: 20px;
+          }
+          span{
+            margin-left: 5px;
+            margin-right: 5px;
+            color: rgb(166.2, 168.6, 173.4);
+          }
+        }
+      }
       .cartItem {
         width: 100%;
         height: 100px;
