@@ -56,12 +56,12 @@ const gotoPart = (index: number) => {
     const part = (foodList.value as HTMLElement).children[index]
     if (part) {
       let scrollNum = 0
-      for(let i = 0;i<index;i++){
-      scrollNum +=  ((foodList.value as HTMLElement).children[i] as HTMLElement).offsetHeight
+      for (let i = 0; i < index; i++) {
+        scrollNum += ((foodList.value as HTMLElement).children[i] as HTMLElement).offsetHeight
       }
       (foodList.value as HTMLElement).scroll({
-        top:scrollNum,
-        behavior:'smooth'
+        top: scrollNum,
+        behavior: 'smooth'
       })
     }
   }
@@ -145,10 +145,10 @@ const totalPrice = computed(() => {
  */
 const addToCart = (item: menuClass) => {
   const S_index = shoppingCart.value.findIndex(e => e.id === item.id)
-  const M_type = menu.value.find(e=>e.type===item.type)
-  const M_item = M_type?.menu.find(e=>e.id===item.id)
-  if(M_item){
-    M_item.count+=1
+  const M_type = menu.value.find(e => e.type === item.type)
+  const M_item = M_type?.menu.find(e => e.id === item.id)
+  if (M_item) {
+    M_item.count += 1
   }
   //判断购物车里面是否有添加的类型
   if (S_index !== -1) {
@@ -171,7 +171,7 @@ const delFromCart = (item: menuClass) => {
   const index = shoppingCart.value.findIndex(e => e.id === item.id)
   const M_type = menu.value.find(e => e.type === item.type)
   const M_item = M_type?.menu.find(e => e.id === item.id)
-  if(M_item){
+  if (M_item) {
     if (M_item.count > 0) {
       M_item.count -= 1
       shoppingCart.value[index].count -= 1
@@ -180,7 +180,7 @@ const delFromCart = (item: menuClass) => {
   if (shoppingCart.value[index].count <= 0) {
     //从购物车移除
     shoppingCart.value.splice(index, 1)
-    if(shoppingCart.value.length===0){
+    if (shoppingCart.value.length === 0) {
       isShow.value = false
     }
   }
@@ -208,11 +208,11 @@ const whiteHeight = computed(() => {
 /**
  * 清空购物车
  */
-const deleteCart = ()=>{
+const deleteCart = () => {
   shoppingCart.value = []
   _setShoppingCart(shoppingCart.value)
-  menu.value.map((item)=>{
-    item.menu.map((e)=>{
+  menu.value.map((item) => {
+    item.menu.map((e) => {
       e.count = 0
       return e
     })
@@ -223,6 +223,14 @@ const deleteCart = ()=>{
 }
 
 const settlement_isShow = ref(false)
+/**
+ * 去结算订单
+ */
+const handleConfirm = () => {
+  if (isShow.value) {
+    router.push('/confirm')
+  }
+}
 onBeforeMount(() => {
   const viewPortHeight = window.innerHeight
   foodNavMinHeight.value = viewPortHeight - 300
@@ -347,7 +355,7 @@ onMounted(async () => {
       <div class="translateInfo">
         <span v-if="shoppingCart.length === 0">￥{{ start_price }}起送</span>
         <span v-else-if="start_price - totalPrice > 0">还差￥{{ start_price - totalPrice }}起送</span>
-        <button v-else class="gotoBuy" :style="{ backgroundColor: primary_color }">去结算</button>
+        <button v-else class="gotoBuy" :style="{ backgroundColor: primary_color }" @click.prevent="handleConfirm">去结算</button>
       </div>
     </div>
 
@@ -728,27 +736,33 @@ onMounted(async () => {
       width: 100%;
       display: flex;
       flex-direction: column;
-      .head{
+
+      .head {
         padding: 10px;
         background-color: white;
         display: flex;
         justify-content: space-between;
-        span{
+
+        span {
           font-size: 12px;
         }
-        .delete{
+
+        .delete {
           display: flex;
           align-items: center;
-          img{
+
+          img {
             width: 20px;
           }
-          span{
+
+          span {
             margin-left: 5px;
             margin-right: 5px;
             color: rgb(166.2, 168.6, 173.4);
           }
         }
       }
+
       .cartItem {
         width: 100%;
         height: 100px;
@@ -761,51 +775,57 @@ onMounted(async () => {
           display: flex;
           justify-content: center;
           align-items: start;
+
           img {
             width: 100%;
           }
 
           margin-right: 10px;
         }
-        .menuInfo{
+
+        .menuInfo {
           flex-grow: 1;
           display: flex;
           flex-direction: column;
-          .top{
-            .contains{
+
+          .top {
+            .contains {
               font-size: 12px;
               color: rgb(166.2, 168.6, 173.4);
             }
           }
-          .bottom{
+
+          .bottom {
             display: flex;
             justify-content: space-between;
+
             .price {
-                color: red;
-                font-size: 20px;
+              color: red;
+              font-size: 20px;
+            }
+
+            .buy {
+              .delButton {
+                width: 25px;
+                height: 25px;
+                border-radius: 25px;
+                border: none;
+                border: 2px solid;
+                background-color: white;
               }
-              .buy{
-                .delButton {
-                    width: 25px;
-                    height: 25px;
-                    border-radius: 25px;
-                    border: none;
-                    border: 2px solid;
-                    background-color: white;
-                  }
-                
-                  .count {
-                    margin-left: 10px;
-                    margin-right: 10px;
-                  }
-                
-                  .addButton {
-                    width: 25px;
-                    height: 25px;
-                    border-radius: 25px;
-                    border: none;
-                  }
+
+              .count {
+                margin-left: 10px;
+                margin-right: 10px;
               }
+
+              .addButton {
+                width: 25px;
+                height: 25px;
+                border-radius: 25px;
+                border: none;
+              }
+            }
           }
         }
       }
