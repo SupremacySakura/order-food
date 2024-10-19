@@ -221,6 +221,8 @@ const deleteCart = ()=>{
   _setMenu(menu.value)
   isShow.value = false
 }
+
+const settlement_isShow = ref(false)
 onBeforeMount(() => {
   const viewPortHeight = window.innerHeight
   foodNavMinHeight.value = viewPortHeight - 300
@@ -388,6 +390,8 @@ onMounted(async () => {
         <div class="cartWhite"></div>
       </div>
     </div>
+
+    <div></div>
   </div>
 </template>
 

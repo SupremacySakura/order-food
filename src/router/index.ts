@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue'
 import OrderView from '@/views/OrderView.vue'
 import UserView from '@/views/UserView.vue'
 import ShopView from '@/views/ShopView.vue'
+import LoginView from '@/views/loginView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -22,6 +23,11 @@ const router = createRouter({
       path:'/shop',
       name:'shop',
       component:ShopView
+    },
+    {
+      path:'/login',
+      name:'login',
+      component:LoginView
     }
   ]
 })
