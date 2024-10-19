@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import { loginByPassword } from '@/services/apis/user'
 import { showToast } from 'vant';
+import { useUserStore } from '@/stores/userStore'
+import { useRouter } from 'vue-router'
+import user_headPortrait from '../../public/user_headPortrait.png'
+const router = useRouter()
+const {_userInfo,_setUserInfo} = useUserStore()
 const account = ref<number>()
 const password = ref<string>('')
 
@@ -9,9 +14,26 @@ const login = async()=>{
   if(account.value){
     const res =await loginByPassword({ account: account.value,password:password.value })
     showToast(res.data.message);
-    console.log(res)
+    if(+res.data.code===200){
+      //将buffer图片转换为blob
+     if(res.data.data.headPortrait.length>0){
+       const blob = new Blob([res.data.data.headPortrait], { type: 'image/jpg' });
+       res.data.data.headPortrait = URL.createObjectURL(blob)
+     } else {
+       res.data.data.headPortrait = user_headPortrait
+     }
+    } 
+     _setUserInfo(res.data.data)
+     router.push('/user')
+    }
   }
-}
+
+onMounted(()=>{
+  //路由守卫,如果已登录跳转回用户页面
+  if(_userInfo){
+    router.push('/user')
+  }
+})
 </script>
 
 <template>

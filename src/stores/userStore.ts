@@ -1,12 +1,12 @@
 import { defineStore } from "pinia"
 import { ref, computed } from "vue"
-
-export const useSettingStore = defineStore('setting', () => {
+import { userClass } from "@/class/userClass"
+export const useUserStore = defineStore('user', () => {
   //声明数据
-  const _userInfo = ref()
+  const _userInfo = ref<userClass|null>()
 
   // 声明操作数据的方法 action (普通函数)
-  const _setUserInfo = (item:any)=>{
+  const _setUserInfo = (item:userClass|null)=>{
     _userInfo.value = item
   }
   // 异步函数

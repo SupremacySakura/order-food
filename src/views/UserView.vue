@@ -1,26 +1,64 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
+import moneyIcon from '../../public/money.png'
 import {useRouter} from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
+const { _userInfo, _setUserInfo } = useUserStore()
+import { useSettingStore } from '@/stores/settingStore'
+import colorIcon from '../../public/color.png'
+const {primary_color,change_Primary_color} = useSettingStore()
 const router = useRouter()
 //导入默认头像
 import user_headPortrait from '../../public/user_headPortrait.png'
 import setting from '../../public/setting.png'
-
-const user = ref({})
+//登出
+const logout = ()=>{
+  console.log('退出登录')
+  _setUserInfo(null)
+}
+const userName = ref('')
+const color = ref(primary_color)
+const changeColor = ()=>{
+  console.log('修改颜色')
+  change_Primary_color(color.value)
+}
+onMounted(()=>{
+  console.log(_userInfo)
+  if(_userInfo){
+    userName.value = _userInfo.username
+  }
+})
 </script>
 
 <template>
   <div class="userBox">
-    <div class="user">
+    <div class="user" :style="{backgroundColor:color}">
       <div class="user_left">
-        <img :src="user_headPortrait" alt="">
-        <span v-if="user" @click="router.push('/login')">去登录</span>
+        <img :src="_userInfo?.headPortrait||user_headPortrait" alt="">
+        <span v-if="!_userInfo" @click="router.push('/login')">去登录</span>
+        <span v-else>{{ userName }}</span>
       </div>
       <div class="user_right">
         <img :src="setting" alt="">
       </div>
     </div>
-    <div></div>
+
+    <div class="money" v-if="_userInfo">
+      <div class="icon">
+        <img :src="moneyIcon" alt="">
+        <span>余额</span>
+      </div>
+      <div>
+        ￥{{ _userInfo?.money }}
+      </div>
+    </div>
+    <div class="color">
+      <div class="icon">
+        <img :src="colorIcon" alt="">
+        <span>主题色:{{ color }}</span>
+    </div>
+    <el-color-picker v-model="color"  @change="changeColor" />
+  </div>
   </div>
 </template>
 
@@ -54,6 +92,24 @@ const user = ref({})
       }
     }
 
+  }
+  .color,.money{
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+    .icon{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      img{
+        width: 30px;
+        margin: 10px;
+      }
+    }
   }
 }
 </style>

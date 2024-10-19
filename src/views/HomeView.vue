@@ -92,13 +92,11 @@ onMounted(async()=>{
 .homeBox {
   width: 100%;
   height: 1000px;
-  background-color: #4CAF50;
 
   .searchBox {
     width: 100%;
     position: sticky;
     top: 0;
-    background-color: #4CAF50;
 
     .locationInfo {
       width: 100%;
