@@ -74,19 +74,23 @@ const menu = ref<menuListClass[]>([])
  * @return 返回一个menuClass数组,与他们的type
  */
 const getMenu = async (id: number) => {
+  console.log('正在请求菜单')
   //发送请求获取菜单数据
   const res = await getMenuById(id)
+  console.log(res.data.data)
   //将buffer图片转换为blob
   for (let i = 0; i < res.data.data.length; i++) {
-    res.data.data[i].menu.map((item: any) => {
-      if (item.image.length > 0) {
-        const blob = new Blob([item.image], { type: 'image/jpg' });
-        item.image = URL.createObjectURL(blob)
-      } else {
-        item.image = foodPhoto
-      }
-      return item
-    })
+    if (res.data.data[i]) {
+      res.data.data[i].menu.map((item: any) => {
+        if (item.image.length > 0) {
+          const blob = new Blob([item.image], { type: 'image/jpg' });
+          item.image = URL.createObjectURL(blob)
+        } else {
+          item.image = foodPhoto
+        }
+        return item
+      })
+    }
   }
   //对menu的数据初始化
   res.data.data.map((item: any) => {
@@ -239,8 +243,14 @@ onBeforeMount(() => {
 onMounted(async () => {
   //获取店铺id
   id.value = route.query?.id
+
   //初始化菜单
-  if (!_menu || _menu[0].menu[0].shop_id != id.value || _shoppingCart.length === 0) {
+  if (!_menu) {
+    menu.value = await getMenu(id.value)
+  } else if (!_menu[0]) {
+    menu.value = await getMenu(id.value)
+  }
+  else if (_menu[0].menu[0].shop_id != id.value || _shoppingCart.length === 0) {
     menu.value = await getMenu(id.value)
   } else {
     menu.value = _menu
@@ -355,7 +365,8 @@ onMounted(async () => {
       <div class="translateInfo">
         <span v-if="shoppingCart.length === 0">￥{{ start_price }}起送</span>
         <span v-else-if="start_price - totalPrice > 0">还差￥{{ start_price - totalPrice }}起送</span>
-        <button v-else class="gotoBuy" :style="{ backgroundColor: primary_color }" @click.prevent="handleConfirm">去结算</button>
+        <button v-else class="gotoBuy" :style="{ backgroundColor: primary_color }"
+          @click.prevent="handleConfirm">去结算</button>
       </div>
     </div>
 

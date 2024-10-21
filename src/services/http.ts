@@ -1,7 +1,8 @@
 import axios from "axios"
 
 const http=axios.create({
-  baseURL: 'http://127.0.0.1',//API的基准URL
+  // baseURL: 'http://8.137.77.95:5000',//API的基准URL
+  baseURL:'http://127.0.0.1',
   timeout:100000,//请求超时时间
   headers:{
     'Content-Type':'application/json'
