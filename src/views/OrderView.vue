@@ -35,7 +35,7 @@ onMounted(async () => {
       <div class="orderItem" v-for="item in data" :key="item">
         <div class="item_top">
           <div class="shop_image">
-            <img :src="item.shop.coverImage" alt="">
+            <img :src="item.shop.coverImage||foodPhoto" alt="">
           </div>
           <div class="shop_info">
             <div class="shop_info_top">
