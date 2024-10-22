@@ -48,7 +48,6 @@ const gotoPage = (url: string, id: number) => {
   active_id.value = id
   localStorage.setItem('active_id',JSON.stringify(active_id.value))
   router.push(url)
-  console.log('跳转成功', url)
 }
 //初始化
 onMounted(()=>{

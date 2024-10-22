@@ -13,17 +13,14 @@ import user_headPortrait from '../../public/user_headPortrait.png'
 import setting from '../../public/setting.png'
 //登出
 const logout = ()=>{
-  console.log('退出登录')
   _setUserInfo(null)
 }
 const userName = ref('')
 const color = ref(primary_color)
 const changeColor = ()=>{
-  console.log('修改颜色')
   change_Primary_color(color.value)
 }
 onMounted(()=>{
-  console.log(_userInfo)
   if(_userInfo){
     userName.value = _userInfo.username
   }

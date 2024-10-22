@@ -5,13 +5,14 @@ const { primary_color } = useSettingStore()
 import { useUserStore } from '@/stores/userStore'
 const { _userInfo } = useUserStore()
 import { getOrderById } from '@/services/apis/user'
+import foodPhoto from '../../public/foodPhoto.png'
 const value = ref('')
 const onClickButton = () => { }
 const data = ref()
 onMounted(async () => {
   if (_userInfo) {
     const res = await getOrderById(_userInfo.id)
-    data.value = res.data.data
+    data.value = res.data.data.reverse()
     console.log(data.value)
   }
 
@@ -46,7 +47,7 @@ onMounted(async () => {
         <div class="item_middle">
           <div class="menu">
             <div v-for="subItem in item.menu" class="menu_item">
-              <img :src="subItem.image" alt="">
+              <img :src="subItem.image||foodPhoto" alt="">
               <span>{{ subItem.name }}</span>
             </div>
           </div>

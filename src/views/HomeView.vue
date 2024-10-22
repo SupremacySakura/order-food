@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import location from '../../public/location.png'
 import foodPhoto from '../../public/foodPhoto.png'
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getAllShop } from '@/services/apis/home'
 import { shopCardClass } from '@/class/shopClass'
 const router = useRouter()
 //导入setting仓库
-import { useSettingStore } from '@/stores/settingStore';
+import { useSettingStore } from '@/stores/settingStore'
 const { primary_color } = useSettingStore()
 //导入shop仓库
 import { useShopStore } from '@/stores/shopStore'
 const { _shopList,_setShopList} = useShopStore()
+//导入工具
 const value = ref('');
 const clickSearch = () => {
 
@@ -32,10 +33,10 @@ onMounted(async()=>{
   //将buffer图片转换为blob
   res.data.data.map((item:shopCardClass)=>{
     if(item.coverImage.length>0){
-      const blob = new Blob([item.coverImage], { type: 'image/jpg' });
+      const blob = new Blob([item.coverImage], { type: 'image/jpg' })
       item.coverImage = URL.createObjectURL(blob)
     }else{
-      item.coverImage = foodPhoto
+      item.coverImage = ''
     }
     
     return item
@@ -66,7 +67,7 @@ onMounted(async()=>{
     <div class="shopList">
       <div class="card" @click="gotoShop(item.id)" v-for="item in shopList" :key="item.id">
         <div class="card_left">
-          <img :src="item.coverImage" :alt="item.name">
+          <img :src="item.coverImage||foodPhoto" :alt="item.name">
         </div>
         <div class="card_right">
           <h4>{{ item.name }}</h4>

@@ -11,6 +11,7 @@ const { _userInfo } = useUserStore()
 import { userClass } from '@/class/userClass'
 import { showToast } from 'vant'
 import { buy } from '@/services/apis/user'
+import foodPhoto from '../../public/foodPhoto.png'
 //备注
 const remark = ref<string>('')
 //商品价格
@@ -47,9 +48,11 @@ const handleBuy = async() => {
 }
 onMounted(()=>{
   //判断是否登录
-  //判断购物车是否有东西
-  if (_shoppingCart.length <= 0 && typeof _userInfo != 'object'){
+  if (_shoppingCart.length <= 0){
     router.push('/home')
+  }else if (typeof _userInfo != 'object'){
+    router.push('/user')
+    showToast('请先登录账号')
   } else {
     //组成发送到后端的数据
     const shop = _shopList.find(item=>+item.id === +_shoppingCart[0].shop_id)
@@ -81,7 +84,7 @@ onMounted(()=>{
     </div>
     <div v-for="item in _shoppingCart" :key="item.id" class="itemBox">
       <div class="image">
-        <img :src="item.image" alt="">
+        <img :src="item.image||foodPhoto" alt="">
       </div>
       <div class="itemInfo">
         <h4>{{ item.name }}</h4>
