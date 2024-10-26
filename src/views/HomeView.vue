@@ -15,7 +15,7 @@ const { _shopList,_setShopList} = useShopStore()
 //导入工具
 const value = ref('')
 const clickSearch = async() => {
- 
+
     //请求店铺信息
     const res = await getShop()
     if(value.value === ''){
@@ -27,6 +27,14 @@ const clickSearch = async() => {
         }
       })
       value.value = ''
+    }
+    shopList.value.forEach((item)=>{
+      if(item){
+        return item
+      }
+    })
+    if(shopList.value.every(item=>!item)){
+      shopList.value = []
     }
   _setShopList(shopList.value)
 }
@@ -83,7 +91,7 @@ onMounted(async()=>{
     </div>
 
     <div class="shopList">
-      <div class="card" @click="gotoShop(item.id)" v-for="(item,index) in shopList" :key="index" v-if="shopList.length>0&&shopList[0]">
+      <div class="card" @click="gotoShop(item.id)" v-for="(item,index) in shopList" :key="index" v-if="shopList.length>0">
         <div class="card_left">
           <img :src="item?.coverImage||foodPhoto" :alt="item?.name">
         </div>

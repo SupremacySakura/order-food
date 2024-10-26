@@ -7,15 +7,42 @@ const { _userInfo } = useUserStore()
 import { getOrderById } from '@/services/apis/user'
 import foodPhoto from '../../public/foodPhoto.png'
 const value = ref('')
-const onClickButton = () => { }
+const onClickButton = async() => {
+  const res = await getOrderById(_userInfo.id)
+  data.value = res.data.data.reverse()
+  console.log(data.value)
+  if(value.value!=='' && data.value){
+  data.value = data.value.map((item) => {
+      const str = item.shop.label.join('') + item.shop.name + item.shop.news + item.shop.other.join('')
+      if (str.includes(value.value)) {
+        return item
+      }
+      let menuStr = ''
+      item.menu.forEach((subItem) => {
+        const strItem = subItem.contains + subItem.menu_label.join('') + subItem.name + subItem.type
+        menuStr += strItem
+      })
+      if (menuStr.includes(value.value)) {
+        return item
+      }
+    })
+    value.value = ''
+  }
+  data.value.forEach((item)=>{
+    if(item){
+      return item
+    }
+  })
+  if(data.value.every(item=>!item)){
+    data.value = []
+  }
+ }
 const data = ref()
 onMounted(async () => {
   if (_userInfo) {
     const res = await getOrderById(_userInfo.id)
     data.value = res.data.data.reverse()
-    console.log(data.value)
   }
-
 })
 </script>
 
@@ -35,25 +62,25 @@ onMounted(async () => {
       <div class="orderItem" v-for="item in data" :key="item">
         <div class="item_top">
           <div class="shop_image">
-            <img :src="item.shop.coverImage||foodPhoto" alt="">
+            <img :src="item?.shop?.coverImage||foodPhoto" alt="">
           </div>
           <div class="shop_info">
             <div class="shop_info_top">
-              <span class="name">{{ item.shop.name }}</span>
-              <span class="status">{{ item.status }}</span>
+              <span class="name">{{ item?.shop?.name }}</span>
+              <span class="status">{{ item?.status }}</span>
             </div>
           </div>
         </div>
         <div class="item_middle">
           <div class="menu">
-            <div v-for="subItem in item.menu" class="menu_item">
-              <img :src="subItem.image||foodPhoto" alt="">
-              <span>{{ subItem.name }}</span>
+            <div v-for="subItem in item?.menu" class="menu_item">
+              <img :src="subItem?.image||foodPhoto" alt="">
+              <span>{{ subItem?.name }}</span>
             </div>
           </div>
           <div class="menu_info">
-            <span class="price">￥{{ item.totalPrice }}</span>
-            <span class="count">共{{ item.totalCount }}件</span>
+            <span class="price">￥{{ item?.totalPrice }}</span>
+            <span class="count">共{{ item?.totalCount }}件</span>
           </div>
         </div>
         <div class="item_bottom">
