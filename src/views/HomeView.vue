@@ -13,9 +13,40 @@ const { primary_color } = useSettingStore()
 import { useShopStore } from '@/stores/shopStore'
 const { _shopList,_setShopList} = useShopStore()
 //导入工具
-const value = ref('');
-const clickSearch = () => {
+const value = ref('')
+const clickSearch = async() => {
+ 
+    //请求店铺信息
+    const res = await getShop()
+    if(value.value === ''){
+        shopList.value = res.data.data
+    }else{
+      shopList.value = res.map((e) => {
+        if (e.label.join('').includes(value.value) || e.name.includes(value.value) || e.other.join('').includes(value.value)) {
+          return e
+        }
+      })
+      value.value = ''
+    }
+  _setShopList(shopList.value)
+}
+/**
+ * 获取店铺列表,返回列表数组
+ */
+const getShop = async() => {
+  //请求店铺信息
+  const res = await getAllShop()
+  //将buffer图片转换为blob
 
+  return res.data.data.map((item: shopCardClass) => {
+    if (item.coverImage.length > 0) {
+      const blob = new Blob([item.coverImage], { type: 'image/jpg' })
+      item.coverImage = URL.createObjectURL(blob)
+    } else {
+      item.coverImage = ''
+    }
+    return item
+  })
 }
 const color = ref('')
 const shopList = ref<shopCardClass[]>([])
@@ -26,26 +57,13 @@ const shopList = ref<shopCardClass[]>([])
 const gotoShop = (id: string | number) => {
   router.push({ path: '/shop', query: { id: id } })
 }
+
 //初始化 数据请求
 onMounted(async()=>{
-  //请求店铺信息
-  const res = await getAllShop()
-  //将buffer图片转换为blob
-  res.data.data.map((item:shopCardClass)=>{
-    if(item.coverImage.length>0){
-      const blob = new Blob([item.coverImage], { type: 'image/jpg' })
-      item.coverImage = URL.createObjectURL(blob)
-    }else{
-      item.coverImage = ''
-    }
-    
-    return item
-  })
+ const res = await getShop() 
   //TODO
-  if(res.data.code===200){
-    shopList.value = res.data.data
+    shopList.value = res
     _setShopList(shopList.value)
-  }
 })
 
 </script>
@@ -65,23 +83,23 @@ onMounted(async()=>{
     </div>
 
     <div class="shopList">
-      <div class="card" @click="gotoShop(item.id)" v-for="item in shopList" :key="item.id">
+      <div class="card" @click="gotoShop(item.id)" v-for="(item,index) in shopList" :key="index" v-if="shopList.length>0&&shopList[0]">
         <div class="card_left">
-          <img :src="item.coverImage||foodPhoto" :alt="item.name">
+          <img :src="item?.coverImage||foodPhoto" :alt="item?.name">
         </div>
         <div class="card_right">
-          <h4>{{ item.name }}</h4>
+          <h4>{{ item?.name }}</h4>
           <div class="shopInfo">
-            <span class="shopPoint">{{item.point}}分</span>
-            <span class="shopSales">月售{{ item.sales>9999?'9999+':item.sales }}</span>
+            <span class="shopPoint">{{item?.point}}分</span>
+            <span class="shopSales">月售{{ item?.sales>9999?'9999+':item?.sales }}</span>
           </div>
           <div class="delivery">
-            <span>起送￥{{ item.start_price }}</span>
-            <span>配送 约￥{{ item.delivery_price }}</span>
+            <span>起送￥{{ item?.start_price }}</span>
+            <span>配送 约￥{{ item?.delivery_price }}</span>
           </div>
-          <span class="label" v-for="subItem in item.label">{{ subItem }}</span>
+          <span class="label" v-for="subItem in item?.label">{{ subItem }}</span>
           <div>
-            <span class="other" v-for="subItem in item.other">{{ subItem }}</span>
+            <span class="other" v-for="subItem in item?.other">{{ subItem }}</span>
           </div>
         </div>
       </div>
