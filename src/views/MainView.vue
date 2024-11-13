@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NavigationBar from '@/components/NavigationBar.vue';
+import NavigationBar from '@/components/NavigationBar.vue'
 </script>
 
 <template>
@@ -7,6 +7,4 @@ import NavigationBar from '@/components/NavigationBar.vue';
   <NavigationBar></NavigationBar>
 </template>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>

@@ -1,27 +1,31 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+//导入vue相关api
+import { onMounted, ref } from 'vue'
+//导入图片
 import moneyIcon from '../../public/money.png'
-import {useRouter} from 'vue-router'
+import colorIcon from '../../public/color.png'
+import user_headPortrait from '../../public/user_headPortrait.png'
+import setting from '../../public/setting.png'
+//导入vue-router相关api
+import { useRouter } from 'vue-router'
+const router = useRouter()
+//导入仓库
 import { useUserStore } from '@/stores/userStore'
 const { _userInfo, _setUserInfo } = useUserStore()
 import { useSettingStore } from '@/stores/settingStore'
-import colorIcon from '../../public/color.png'
-const {primary_color,change_Primary_color} = useSettingStore()
-const router = useRouter()
-//导入默认头像
-import user_headPortrait from '../../public/user_headPortrait.png'
-import setting from '../../public/setting.png'
+const { primary_color, change_Primary_color } = useSettingStore()
+
 //登出
-const logout = ()=>{
+const logout = () => {
   _setUserInfo(null)
 }
 const userName = ref('')
 const color = ref(primary_color)
-const changeColor = ()=>{
+const changeColor = () => {
   change_Primary_color(color.value)
 }
-onMounted(()=>{
-  if(_userInfo){
+onMounted(() => {
+  if (_userInfo) {
     userName.value = _userInfo.username
   }
 })
@@ -29,9 +33,9 @@ onMounted(()=>{
 
 <template>
   <div class="userBox">
-    <div class="user" :style="{backgroundColor:color}">
+    <div class="user" :style="{ backgroundColor: color }">
       <div class="user_left">
-        <img :src="_userInfo?.headPortrait||user_headPortrait" alt="">
+        <img :src="_userInfo?.headPortrait || user_headPortrait" alt="">
         <span v-if="!_userInfo" @click="router.push('/login')">去登录</span>
         <span v-else>{{ userName }}</span>
       </div>
@@ -53,18 +57,19 @@ onMounted(()=>{
       <div class="icon">
         <img :src="colorIcon" alt="">
         <span>主题色:{{ color }}</span>
+      </div>
+      <el-color-picker v-model="color" @change="changeColor" />
     </div>
-    <el-color-picker v-model="color"  @change="changeColor" />
-  </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-.userBox{
+.userBox {
   width: 100%;
   height: 100vh;
-  background-color:#f7f7f7;
-  .user{
+  background-color: #f7f7f7;
+
+  .user {
     width: 100%;
     height: 100px;
     display: flex;
@@ -72,37 +77,45 @@ onMounted(()=>{
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid black;
-    .user_left{
+
+    .user_left {
       display: flex;
       align-items: center;
+
       img {
-          width: 60px;
-          border-radius: 60px;
-          margin-right: 10px;
-        }
+        width: 60px;
+        border-radius: 60px;
+        margin-right: 10px;
+      }
     }
-    .user_right{
+
+    .user_right {
       display: flex;
       align-items: center;
-      img{
+
+      img {
         width: 40px;
       }
     }
 
   }
-  .color,.money{
+
+  .color,
+  .money {
     width: 100%;
     height: 80px;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.5);
-    .icon{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+
+    .icon {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      img{
+
+      img {
         width: 30px;
         margin: 10px;
       }

@@ -1,51 +1,57 @@
 <script setup lang="ts">
+//导入图片
 import location from '../../public/location.png'
 import foodPhoto from '../../public/foodPhoto.png'
+//导入vue相关api
 import { onMounted, ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { getAllShop } from '@/services/apis/home'
-import { shopCardClass } from '@/class/shopClass'
+//导入vue-router相关api
+import { useRouter } from 'vue-router'
 const router = useRouter()
+//导入请求相关api
+import { getAllShop } from '@/services/apis/home'
+//导入类型
+import { shopCardClass } from '@/class/shopClass'
 //导入setting仓库
 import { useSettingStore } from '@/stores/settingStore'
 const { primary_color } = useSettingStore()
 //导入shop仓库
 import { useShopStore } from '@/stores/shopStore'
-const { _shopList,_setShopList} = useShopStore()
+const { _setShopList } = useShopStore()
 //导入工具
 const value = ref('')
-const clickSearch = async() => {
-
-    //请求店铺信息
-    const res = await getShop()
-    if(value.value === ''){
-        shopList.value = res.data.data
-    }else{
-      shopList.value = res.map((e) => {
-        if (e.label.join('').includes(value.value) || e.name.includes(value.value) || e.other.join('').includes(value.value)) {
-          return e
-        }
-      })
-      value.value = ''
-    }
-    shopList.value.forEach((item)=>{
-      if(item){
-        return item
+/**
+ * 搜索
+ */
+const clickSearch = async () => {
+  //请求店铺信息
+  const res = await getShop()
+  if (value.value === '') {
+    shopList.value = res.data.data
+  } else {
+    shopList.value = res.map((e:any) => {
+      if (e.label.join('').includes(value.value) || e.name.includes(value.value) || e.other.join('').includes(value.value)) {
+        return e
       }
     })
-    if(shopList.value.every(item=>!item)){
-      shopList.value = []
+    value.value = ''
+  }
+  shopList.value.forEach((item) => {
+    if (item) {
+      return item
     }
+  })
+  if (shopList.value.every(item => !item)) {
+    shopList.value = []
+  }
   _setShopList(shopList.value)
 }
 /**
  * 获取店铺列表,返回列表数组
  */
-const getShop = async() => {
+const getShop = async () => {
   //请求店铺信息
   const res = await getAllShop()
   //将buffer图片转换为blob
-
   return res.data.data.map((item: shopCardClass) => {
     if (item.coverImage.length > 0) {
       const blob = new Blob([item.coverImage], { type: 'image/jpg' })
@@ -56,7 +62,6 @@ const getShop = async() => {
     return item
   })
 }
-const color = ref('')
 const shopList = ref<shopCardClass[]>([])
 /**
  * 跳转到店铺
@@ -67,11 +72,11 @@ const gotoShop = (id: string | number) => {
 }
 
 //初始化 数据请求
-onMounted(async()=>{
- const res = await getShop() 
+onMounted(async () => {
+  const res = await getShop()
   //TODO
-    shopList.value = res
-    _setShopList(shopList.value)
+  shopList.value = res
+  _setShopList(shopList.value)
 })
 
 </script>
@@ -91,15 +96,16 @@ onMounted(async()=>{
     </div>
 
     <div class="shopList">
-      <div class="card" @click="gotoShop(item.id)" v-for="(item,index) in shopList" :key="index" v-if="shopList.length>0">
+      <div class="card" @click="gotoShop(item.id)" v-for="(item, index) in shopList" :key="index"
+        v-if="shopList.length > 0">
         <div class="card_left">
-          <img :src="item?.coverImage||foodPhoto" :alt="item?.name">
+          <img :src="item?.coverImage || foodPhoto" :alt="item?.name">
         </div>
         <div class="card_right">
           <h4>{{ item?.name }}</h4>
           <div class="shopInfo">
-            <span class="shopPoint">{{item?.point}}分</span>
-            <span class="shopSales">月售{{ item?.sales>9999?'9999+':item?.sales }}</span>
+            <span class="shopPoint">{{ item?.point }}分</span>
+            <span class="shopSales">月售{{ item?.sales > 9999 ? '9999+' : item?.sales }}</span>
           </div>
           <div class="delivery">
             <span>起送￥{{ item?.start_price }}</span>

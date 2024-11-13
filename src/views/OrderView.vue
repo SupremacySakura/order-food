@@ -1,24 +1,34 @@
 <script setup lang="ts">
+//导入vue相关api
 import { ref, onMounted } from 'vue'
+//导入仓库
 import { useSettingStore } from '@/stores/settingStore'
 const { primary_color } = useSettingStore()
 import { useUserStore } from '@/stores/userStore'
 const { _userInfo } = useUserStore()
+//导入请求相关api
 import { getOrderById } from '@/services/apis/user'
+//导入图片
 import foodPhoto from '../../public/foodPhoto.png'
+//导入类型
+import { userClass } from '@/class/userClass'
+//搜索值
 const value = ref('')
-const onClickButton = async() => {
-  const res = await getOrderById(_userInfo.id)
+/**
+ * 搜索
+ */
+const onClickButton = async () => {
+  const res = await getOrderById((_userInfo as userClass).id)
   data.value = res.data.data.reverse()
   console.log(data.value)
-  if(value.value!=='' && data.value){
-  data.value = data.value.map((item) => {
+  if (value.value !== '' && data.value) {
+    data.value = data.value.map((item: any) => {
       const str = item.shop.label.join('') + item.shop.name + item.shop.news + item.shop.other.join('')
       if (str.includes(value.value)) {
         return item
       }
       let menuStr = ''
-      item.menu.forEach((subItem) => {
+      item.menu.forEach((subItem: any) => {
         const strItem = subItem.contains + subItem.menu_label.join('') + subItem.name + subItem.type
         menuStr += strItem
       })
@@ -28,15 +38,16 @@ const onClickButton = async() => {
     })
     value.value = ''
   }
-  data.value.forEach((item)=>{
-    if(item){
+  data.value.forEach((item: any) => {
+    if (item) {
       return item
     }
   })
-  if(data.value.every(item=>!item)){
+  if (data.value.every((item: any) => !item)) {
     data.value = []
   }
- }
+}
+//订单内容
 const data = ref()
 onMounted(async () => {
   if (_userInfo) {
@@ -62,7 +73,7 @@ onMounted(async () => {
       <div class="orderItem" v-for="item in data" :key="item">
         <div class="item_top">
           <div class="shop_image">
-            <img :src="item?.shop?.coverImage||foodPhoto" alt="">
+            <img :src="item?.shop?.coverImage || foodPhoto" alt="">
           </div>
           <div class="shop_info">
             <div class="shop_info_top">
@@ -74,7 +85,7 @@ onMounted(async () => {
         <div class="item_middle">
           <div class="menu">
             <div v-for="subItem in item?.menu" class="menu_item">
-              <img :src="subItem?.image||foodPhoto" alt="">
+              <img :src="subItem?.image || foodPhoto" alt="">
               <span>{{ subItem?.name }}</span>
             </div>
           </div>
@@ -84,7 +95,7 @@ onMounted(async () => {
           </div>
         </div>
         <div class="item_bottom">
-          <button :style="{backgroundColor:primary_color}">评价</button>
+          <button :style="{ backgroundColor: primary_color }">评价</button>
         </div>
       </div>
     </div>
@@ -192,22 +203,26 @@ onMounted(async () => {
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          .price{
+
+          .price {
             font-size: 14px;
           }
-          .count{
+
+          .count {
             font-size: 12px;
             color: rgb(166.2, 168.6, 173.4);
           }
         }
       }
-      .item_bottom{
+
+      .item_bottom {
         width: 100%;
         flex-grow: 1;
         padding: 10px;
         display: flex;
         justify-content: end;
-        button{
+
+        button {
           width: 60px;
           height: 30px;
           border-radius: 5px;

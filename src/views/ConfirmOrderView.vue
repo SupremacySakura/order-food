@@ -1,16 +1,21 @@
 <script setup lang="ts">
+//导入vue相关api
 import { ref, onMounted, computed } from 'vue'
+//导入vue-router相关api
 import { useRouter } from 'vue-router'
 const router = useRouter()
+//导入仓库
 import { useShopStore } from '@/stores/shopStore'
 const { _shoppingCart, _setShoppingCart, _shopList } = useShopStore()
 import { useSettingStore } from '@/stores/settingStore'
 const { primary_color } = useSettingStore()
 import { useUserStore } from '@/stores/userStore'
 const { _userInfo } = useUserStore()
-import { userClass } from '@/class/userClass'
+//导入vant组件库
 import { showToast } from 'vant'
+//导入请求相关api
 import { buy } from '@/services/apis/user'
+//导入图片
 import foodPhoto from '../../public/foodPhoto.png'
 //备注
 const remark = ref<string>('')
@@ -28,17 +33,20 @@ const totalCount = computed(() => {
 })
 //data
 let data = {}
-const handleBuy = async() => {
+/**
+ * 购买商品
+ */
+const handleBuy = async () => {
   console.log('购买')
-  if(!_userInfo){
+  if (!_userInfo) {
     return
   }
-  if(totalPrice.value > _userInfo?.money){
+  if (totalPrice.value > _userInfo?.money) {
     showToast('余额不足')
     return
   } else {
     const res = await buy(data)
-    if(res.data.code===200){
+    if (res.data.code === 200) {
       showToast('购买成功')
       _setShoppingCart([])
       router.push('/order')
@@ -46,37 +54,37 @@ const handleBuy = async() => {
     return
   }
 }
-onMounted(()=>{
+onMounted(() => {
   //判断是否登录
-  if (_shoppingCart.length <= 0){
+  if (_shoppingCart.length <= 0) {
     router.push('/home')
-  }else if (typeof _userInfo != 'object'){
+  } else if (typeof _userInfo != 'object') {
     router.push('/user')
     showToast('请先登录账号')
   } else {
     //组成发送到后端的数据
-    const shop = _shopList.find(item=>+item.id === +_shoppingCart[0].shop_id)
+    const shop = _shopList.find(item => +item.id === +_shoppingCart[0].shop_id)
     const menu = _shoppingCart
     const user_id = _userInfo?.id
     const status = '进行中'
     data = {
-      shop:shop,
-      menu:menu,
-      user_id:user_id,
-      totalPrice:totalPrice.value,
-      totalCount:totalCount.value,
-      status:status,
-      remark:remark.value,
+      shop: shop,
+      menu: menu,
+      user_id: user_id,
+      totalPrice: totalPrice.value,
+      totalCount: totalCount.value,
+      status: status,
+      remark: remark.value,
     }
   }
-  
+
 })
 </script>
 
 <template>
   <!-- 购物车 -->
   <div class="confirmBox">
-    <div class="head" :style="{backgroundColor:primary_color}">
+    <div class="head" :style="{ backgroundColor: primary_color }">
       <div class="back" @click="() => { router.back() }">
         <van-icon name="arrow-left" />
       </div>
@@ -84,7 +92,7 @@ onMounted(()=>{
     </div>
     <div v-for="item in _shoppingCart" :key="item.id" class="itemBox">
       <div class="image">
-        <img :src="item.image||foodPhoto" alt="">
+        <img :src="item.image || foodPhoto" alt="">
       </div>
       <div class="itemInfo">
         <h4>{{ item.name }}</h4>
@@ -109,67 +117,78 @@ onMounted(()=>{
       </div>
     </div>
     <!-- 提交订单 -->
-     <div class="buyButton">
-      <button :style="{backgroundColor:primary_color}" @click="handleBuy">购买</button>
-     </div>
+    <div class="buyButton">
+      <button :style="{ backgroundColor: primary_color }" @click="handleBuy">购买</button>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
-.confirmBox{
+.confirmBox {
   width: 100%;
   height: 100vh;
   background-color: #f7f7f7;
-  .head{
+
+  .head {
     width: 100%;
     height: 60px;
     padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    h2{
+
+    h2 {
       font-weight: normal;
     }
   }
-  .itemBox{
+
+  .itemBox {
     width: 100%;
     height: 100px;
     padding: 10px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.5);
-    .image{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+
+    .image {
       width: 60px;
       margin-right: 10px;
-      img{
+
+      img {
         width: 100%;
       }
     }
-    .itemInfo{
+
+    .itemInfo {
       display: flex;
       flex-direction: column;
       flex-grow: 1;
       margin-right: 10px;
-      .contains{
+
+      .contains {
         font-size: 12px;
         color: rgb(166.2, 168.6, 173.4);
       }
-      .price_and_count{
+
+      .price_and_count {
         display: flex;
         justify-content: space-between;
         align-items: center;
+
         .price {
-            font-size: 20px;
-            color: red;
-          }
-        .count{
+          font-size: 20px;
+          color: red;
+        }
+
+        .count {
           color: rgb(166.2, 168.6, 173.4);
         }
       }
-     
+
     }
   }
-  .totalPrice{
+
+  .totalPrice {
     width: 100%;
     height: 50px;
     padding: 10px;
@@ -179,14 +198,17 @@ onMounted(()=>{
     font-size: 24px;
     color: red;
   }
-  .remark{
+
+  .remark {
     margin-top: 10px;
     padding: 10px;
   }
-  .moneyBox{
+
+  .moneyBox {
     width: 100%;
     padding: 10px;
-    .moneyItem{
+
+    .moneyItem {
       width: 100%;
       height: 50px;
       padding: 10px;
@@ -196,11 +218,13 @@ onMounted(()=>{
       align-items: center;
     }
   }
-  .buyButton{
+
+  .buyButton {
     position: fixed;
     bottom: 5%;
-    right:5%;
-    button{
+    right: 5%;
+
+    button {
       width: 80px;
       height: 40px;
       border-radius: 40px;

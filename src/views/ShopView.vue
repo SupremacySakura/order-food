@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref, nextTick, type VNode, type VNodeRef, computed } from 'vue'
+//导入vue相关api
+import { onBeforeMount, onMounted, ref, nextTick, computed } from 'vue'
+//导入vue-router相关内容
 import { useRouter, useRoute } from 'vue-router'
+//导入图片
 import foodPhoto from '../../public/foodPhoto.png'
 //导入setting仓库
 import { useSettingStore } from '@/stores/settingStore'
 const { primary_color } = useSettingStore()
 //导入shop仓库
 import { useShopStore } from '@/stores/shopStore'
-const { _shopList, _setShopList, _menu, _setMenu, _setShoppingCart, _shoppingCart } = useShopStore()
+const { _menu, _setMenu, _setShoppingCart, _shoppingCart } = useShopStore()
 //导入请求方式
 import { getMenuById, getAllShop } from '@/services/apis/home'
 //导入店铺与菜单类
-import { shopCardClass, menuClass, menuListClass, shoppingCartClass } from '@/class/shopClass';
+import { shopCardClass, menuClass, menuListClass, shoppingCartClass } from '@/class/shopClass'
 const router = useRouter()
 const route = useRoute()
 //导入配送员图片
