@@ -31,3 +31,5 @@ npm run dev
 ```sh
 npm run build
 ```
+## 简介
+点餐app,目前是个半成品
